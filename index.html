@@ -1,207 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aarbee Advisors</title>
-  <style>
-    body, html {
-      margin: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, #002244, #00509E);
-      color: #fff;
-      text-align: center;
-      scroll-behavior: smooth;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aarbee Advisors — Research & Simulation</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Georgia, serif;
+    background-color: #ececec;
+    color: #222;
+    display: flex;
+    min-height: 100vh;
+  }
 
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
+  /* Sidebar */
+  .sidebar {
+    background: linear-gradient(180deg, #1e2a38, #2f3e50);
+    color: #fff;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-right: 2px solid #b4b4b4;
+  }
+  .sidebar h2 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+  }
+  .nav-link {
+    color: #ddd;
+    text-decoration: none;
+    padding: 10px;
+    margin: 3px 0;
+    display: block;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .nav-link:hover, .nav-link.active {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  .footer {
+    margin-top: auto;
+    font-size: 0.8rem;
+    text-align: center;
+    opacity: 0.7;
+  }
 
-    .logo {
-      font-size: 3rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: #fff;
-      margin-bottom: 1rem;
-    }
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 30px 50px;
+    background: linear-gradient(180deg, #f6f6f6, #e9e9e9);
+    display: flex;
+    flex-direction: column;
+  }
 
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      letter-spacing: 1px;
-    }
+  .article {
+    display: none;
+  }
+  .article.active {
+    display: block;
+  }
 
-    .hero p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-      margin-bottom: 40px;
-    }
+  .article-header {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 25px;
+  }
+  .article-header h1 {
+    font-family: Georgia, serif;
+    font-size: 2rem;
+    color: #1e2a38;
+    margin-bottom: 8px;
+  }
+  .article-header p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0;
+  }
+  .article-body {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+    max-width: 900px;
+  }
 
-    .placeholders {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .placeholder {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 25px;
-      width: 250px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
-      text-align: justify;
-    }
-
-    .placeholder:hover {
-      transform: scale(1.05);
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .placeholder h2 {
-      font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 1.3rem;
-    }
-
-    .section {
-      display: none;
-      min-height: 100vh;
-      padding: 80px 20px 40px;
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .section h2 {
-      font-weight: bold;
-      margin-bottom: 20px;
-      font-size: 2rem;
-    }
-
-    .section p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-    }
-
-    .home-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      padding: 10px 15px;
-      background: #fff;
-      color: #000000;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .home-button:hover {
-      background: #FFC700;
-    }
-
-    footer {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.9rem;
-  opacity: 0.7;
-  text-align: center;
-}
-
-
-    @media (max-width: 600px) {
-      .placeholders {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-  </style>
+  /* Simulator */
+  .simulator-section {
+    margin-top: 40px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fdfdfd;
+    box-shadow: inset 0 0 3px #ccc;
+    padding: 15px;
+  }
+  .simulator-header {
+    background: linear-gradient(180deg, #dfe3e6, #c7ccd0);
+    padding: 10px;
+    border-bottom: 1px solid #aaa;
+    font-weight: bold;
+    color: #2b3a45;
+    letter-spacing: 0.5px;
+    font-size: 0.95rem;
+  }
+  .simulator-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+  }
+  .controls {
+    flex: 0 0 270px;
+    background: #f0f0f0;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  .controls label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+  }
+  .controls input, .controls select {
+    width: 100%;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 4px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    background: #fafafa;
+    font-family: "Segoe UI", sans-serif;
+  }
+  .chart-container {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 10px;
+  }
+  canvas { width: 100% !important; height: 400px !important; }
+</style>
 </head>
 <body>
 
-  <!-- Homepage Hero -->
-  <div class="hero" id="home">
-    <div class="logo">Aarbee Advisors</div>
-    <h1>A personal blog and viewpoint on financial topics</h1>
-    <p>!!! All opinions are personal and do not constitute advise or recommendation !!!</p>
+  <div class="sidebar">
+    <h2>Aarbee Advisors</h2>
+    <div class="nav-link active" data-article="home">Home</div>
+    <div class="nav-link" data-article="market">Market Outlook</div>
+    <div class="nav-link" data-article="behavior">Behavioral Investing</div>
+    <div class="nav-link" data-article="allocation">Asset Allocation</div>
+    <div class="nav-link" data-article="macro">Global Macro Updates</div>
+    <div class="nav-link" data-article="tools">Tools & Calculators</div>
+    <div class="nav-link" data-article="contact">Contact</div>
+    <div class="footer">© <span id="year"></span> Aarbee Advisors</div>
+  </div>
 
-    <div class="placeholders">
-      <div class="placeholder" onclick="openSection('section1')">
-        <h2>Global Indices</h2>
-        <p>Click to see more</p>
+  <div class="main-content">
+
+    <!-- HOME -->
+    <div id="home" class="article active">
+      <div class="article-header">
+        <h1>Understanding Long-Term Compounding in Volatile Markets</h1>
+        <p>By Research Desk • Updated Weekly</p>
       </div>
-      <div class="placeholder" onclick="openSection('section2')">
-        <h2>Placeholder 2</h2>
-        <p>Click to see more</p>
+      <div class="article-body">
+        <p>Long-term investing interacts with volatility, taxes, and behavior in complex ways.
+        Use the simulator below to visualize the impact of different parameters.</p>
+        <div class="simulator-section">
+          <div class="simulator-header">📈 Investment Growth Simulator</div>
+          <div class="simulator-container">
+            <div class="controls">
+              <label>Initial Investment ($)</label>
+              <input type="number" id="initial" value="10000" min="0" step="500">
+              <label>Monthly Contribution ($)</label>
+              <input type="number" id="monthly" value="500" min="0" step="50">
+              <label>Annual Return (%)</label>
+              <input type="range" id="return" value="8" min="0" max="20">
+              <span id="returnLabel">8%</span>
+              <label>Volatility (%)</label>
+              <input type="range" id="volatility" value="10" min="0" max="30">
+              <span id="volLabel">10%</span>
+              <label>Inflation (%)</label>
+              <input type="range" id="inflation" value="3" min="0" max="10">
+              <span id="inflationLabel">3%</span>
+              <label>Tax on Gains (%)</label>
+              <input type="range" id="tax" value="15" min="0" max="40">
+              <span id="taxLabel">15%</span>
+              <label>Time Horizon (Years)</label>
+              <input type="number" id="years" value="25" min="1" max="60">
+              <label>Risk Tolerance</label>
+              <select id="riskTolerance">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+              <label><input type="checkbox" id="randomize" checked> Random Variation</label>
+            </div>
+            <div class="chart-container"><canvas id="simChart"></canvas></div>
+          </div>
+        </div>
       </div>
-      <div class="placeholder" onclick="openSection('section3')">
-        <h2>Placeholder 3</h2>
-        <p>Click to see more</p>
-      </div>
-      <div class="placeholder" onclick="openSection('section4')">
-        <h2>Placeholder 4</h2>
-        <p>Click to see more</p>
-      </div>
+    </div>
+
+    <!-- Other Articles -->
+    <div id="market" class="article">
+      <div class="article-header"><h1>Market Outlook</h1></div>
+      <div class="article-body"><p>Our current market outlook suggests moderate earnings growth amid persistent inflationary pressures...</p></div>
+    </div>
+
+    <div id="behavior" class="article">
+      <div class="article-header"><h1>Behavioral Investing</h1></div>
+      <div class="article-body"><p>Investor psychology often determines portfolio outcomes more than asset selection itself...</p></div>
+    </div>
+
+    <div id="allocation" class="article">
+      <div class="article-header"><h1>Asset Allocation</h1></div>
+      <div class="article-body"><p>Proper diversification across asset classes remains the cornerstone of long-term investing...</p></div>
+    </div>
+
+    <div id="macro" class="article">
+      <div class="article-header"><h1>Global Macro Updates</h1></div>
+      <div class="article-body"><p>Global growth remains uneven as developed markets slow while emerging economies rebound...</p></div>
+    </div>
+
+    <div id="tools" class="article">
+      <div class="article-header"><h1>Tools & Calculators</h1></div>
+      <div class="article-body"><p>Use our interactive calculators to model returns, risk, and compounding scenarios...</p></div>
+    </div>
+
+    <div id="contact" class="article">
+      <div class="article-header"><h1>Contact</h1></div>
+      <div class="article-body"><p>Email us at <b>info@aarbeeadvisors.com</b> for inquiries or research collaboration.</p></div>
     </div>
   </div>
 
-  <!-- Sections -->
-  <div class="section" id="section1">
-    <div class="home-button" onclick="goHome()">Home</div>
-    <h2>Global Indices</h2>
-    <p>Asian equity markets closed mixed amid U.S. government shutdown fears. A shutdown may delay key economic data. Shanghai rose on stimulus hopes; Hong Kong rebounded. Japan fell as central bank members debated rate hikes. China’s PMI showed mixed signals, with private surveys exceeding expectations.
-European markets rose, despite lingering worries about Trump’s tariff threats and the risk of a U.S. government shutdown.<br> <br> Investors weighed various regional economic reports and generally adopted a cautious approach.
-U.S. markets closed positive after a range bound session as market participants kept an eye on developments on Washington, where lawmakers are struggling to reach an agreement to avert a government shutdown.</p>
-  </div>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-  <div class="section" id="section2">
-    <div class="home-button" onclick="goHome()">Home</div>
-    <h2>Placeholder 2</h2>
-    <p>This is the detailed text for Placeholder 2. You can put any content here.</p>
-  </div>
+  // Sidebar navigation
+  document.querySelectorAll('.nav-link').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+      document.querySelectorAll('.article').forEach(a=>a.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById(link.dataset.article).classList.add('active');
+    });
+  });
 
-  <div class="section" id="section3">
-    <div class="home-button" onclick="goHome()">Home</div>
-    <h2>Placeholder 3</h2>
-    <p>This is the detailed text for Placeholder 3. You can put any content here.</p>
-  </div>
-  
-  <div class="section" id="section4">
-    <div class="home-button" onclick="goHome()">Home</div>
-    <h2>Placeholder 4</h2>
-    <p>This is the detailed text for Placeholder 4. You can put any content here.</p>
-  </div>
+  // Simulator
+  const ctx = document.getElementById('simChart').getContext('2d');
+  let chart;
+  const inputs = {
+    initial: document.getElementById('initial'),
+    monthly: document.getElementById('monthly'),
+    annualReturn: document.getElementById('return'),
+    volatility: document.getElementById('volatility'),
+    inflation: document.getElementById('inflation'),
+    tax: document.getElementById('tax'),
+    years: document.getElementById('years'),
+    riskTolerance: document.getElementById('riskTolerance'),
+    randomize: document.getElementById('randomize')
+  };
+  const labels = {
+    returnLabel: document.getElementById('returnLabel'),
+    volLabel: document.getElementById('volLabel'),
+    inflationLabel: document.getElementById('inflationLabel'),
+    taxLabel: document.getElementById('taxLabel')
+  };
 
-  <footer>© <span id="year"></span> Aarbee Advisors. All rights reserved.</footer>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    function openSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelector('.hero').style.display = 'none';
-      document.getElementById(id).classList.add('active');
+  function simulate(){
+    const initial=+inputs.initial.value, monthly=+inputs.monthly.value,
+      r=+inputs.annualReturn.value/100, v=+inputs.volatility.value/100,
+      inf=+inputs.inflation.value/100, t=+inputs.tax.value/100,
+      y=+inputs.years.value, risk=inputs.riskTolerance.value,
+      randomize=inputs.randomize.checked;
+    const mult=risk==='low'?0.7:risk==='high'?1.3:1, adjV=v*mult;
+    const labelsX=[], data=[], upper=[], lower=[];
+    let bal=initial;
+    for(let i=0;i<=y;i++){
+      labelsX.push(i);
+      if(i>0){
+        let rr=r; if(randomize) rr+=(Math.random()-0.5)*adjV;
+        bal=bal*(1+rr*(1-t))+monthly*12; bal=bal/(1+inf);
+      }
+      data.push(bal); upper.push(bal*(1+adjV)); lower.push(bal*(1-adjV));
     }
-
-    function goHome() {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelector('.hero').style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if(chart){
+      chart.data.labels=labelsX;
+      chart.data.datasets[0].data=data;
+      chart.data.datasets[1].data=upper;
+      chart.data.datasets[2].data=lower;
+      chart.update();
+    } else {
+      chart=new Chart(ctx,{
+        type:'line',
+        data:{labels:labelsX,datasets:[
+          {label:'Expected Growth',borderColor:'#0059b3',data:data,fill:false},
+          {label:'Upper Range',borderColor:'green',borderDash:[4,4],data:upper,fill:false},
+          {label:'Lower Range',borderColor:'red',borderDash:[4,4],data:lower,fill:false}
+        ]},
+        options:{
+          plugins:{legend:{position:'bottom'}},
+          scales:{
+            x:{title:{display:true,text:'Years'}},
+            y:{title:{display:true,text:'Portfolio Value ($)'}}
+          }
+        }
+      });
     }
-  </script>
+  }
+
+  Object.values(inputs).forEach(el=>el.addEventListener('input',simulate));
+  inputs.annualReturn.addEventListener('input',()=>labels.returnLabel.textContent=inputs.annualReturn.value+'%');
+  inputs.volatility.addEventListener('input',()=>labels.volLabel.textContent=inputs.volatility.value+'%');
+  inputs.inflation.addEventListener('input',()=>labels.inflationLabel.textContent=inputs.inflation.value+'%');
+  inputs.tax.addEventListener('input',()=>labels.taxLabel.textContent=inputs.tax.value+'%');
+  simulate();
+</script>
 
 </body>
 </html>
